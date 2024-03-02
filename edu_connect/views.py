@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.db.models import Count, F
 from .models import Product, Group, User, Lesson
-from .serializer import ProductSerializer
+from .serializer import ProductSerializer, LessonSerializer
 from rest_framework.response import Response
 from rest_framework import viewsets
 
@@ -72,3 +72,13 @@ class ProductViewSet(viewsets.ModelViewSet):
         data['lesson_count'] = lesson_count
 
         return Response(data)
+
+
+
+class UserLessonsViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = LessonSerializer
+
+    def get_queryset(self):
+        username = self.request.query_params.get('username')
+        products = Product.objects.filter(group__users__username=username)
+        return Lesson.objects.filter(product__in=products)
