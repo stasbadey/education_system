@@ -18,4 +18,14 @@ class LessonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lesson
-        fields = ['id', 'name', 'video_link', 'product']
+        fields = ['name', 'video_link', 'product']
+
+
+class StatisticSerializer(serializers.ModelSerializer):
+    num_students = serializers.IntegerField(read_only=True)
+    group_fill_percentage = serializers.FloatField(read_only=True)
+    purchase_percentage = serializers.FloatField(read_only=True)
+
+    class Meta:
+        model = Product
+        fields = ['name', 'num_students', 'group_fill_percentage', 'purchase_percentage']

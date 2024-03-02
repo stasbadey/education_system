@@ -83,3 +83,5 @@ python manage.py runserver
 - "ongoing_products": This section contains a list of products that are currently ongoing.
 
 2. **API for a list of lessons for a specific product:** This endpoint displays a list of lessons for a specific product to which the user has access. To access this API, append the username of the user to the URL in the following format: http://127.0.0.1:8000/lessons/?username=?NAME_OF_USER?. After making this request, you will receive a list of available lessons for the user.
+
+3. The API is not working correctly and does not display the group fill percentage accurately.

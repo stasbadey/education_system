@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
-
 from django.db.models import Count
 
 
@@ -17,6 +16,8 @@ class Product(models.Model):
         return self.name
 
     def add_student_to_group(self, student):
+        if datetime.strptime(str(self.start_date), "%Y-%m-%d %H:%M") <= datetime.now():
+            raise Exception("Impossible to add new student because product starts")
         groups = self.group_set.annotate(num_users=Count('users')).order_by('-num_users')
 
         for group in groups:

@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.db.models import Count, F
 from .models import Product, Group, User, Lesson
-from .serializer import ProductSerializer, LessonSerializer
+from .serializer import ProductSerializer, LessonSerializer, StatisticSerializer
 from rest_framework.response import Response
 from rest_framework import viewsets
 
@@ -74,7 +74,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(data)
 
 
-
 class UserLessonsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = LessonSerializer
 
@@ -82,3 +81,22 @@ class UserLessonsViewSet(viewsets.ReadOnlyModelViewSet):
         username = self.request.query_params.get('username')
         products = Product.objects.filter(group__users__username=username)
         return Lesson.objects.filter(product__in=products)
+
+
+class StatisticViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Product.objects.annotate(
+        num_students=Count('group__users')
+    ).all()
+    serializer_class = StatisticSerializer
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        total_users = User.objects.count()
+
+        for product in response.data:
+            max_group_size = Group.objects.filter(product=product['id']).aggregate(max_size=Count('users'))['max_size']
+            product['group_fill_percentage'] = (product[
+                                                    'num_students'] / max_group_size) * 100 if max_group_size > 0 else 0
+            product['purchase_percentage'] = (product['num_students'] / total_users) * 100 if total_users > 0 else 0
+
+        return response
