@@ -63,6 +63,14 @@ from edu_connect.views import get_user_id
 ?PRODUCT?.add_student_to_group(get_user_id(?NAME_OF_USER?))
 ```
 
+We can determine whether the user (client/student) has access to the product:
+
+1. To do this, you can execute the following command in the shell:
+```python
+?PRODUCT?.has_user_access(get_user_id("?USERNAME?"))
+```
+
+
 ### Balancing Users in Groups
 If a product hasn't started yet and you want to balance the number of users in groups, use the following command:
 ```python
